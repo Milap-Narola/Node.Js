@@ -1,38 +1,21 @@
-const express = require("express");
-const dbConnect = require("./db");
-const User = require("./userSchema");
-const isValid = require("./Validation");
+const express = require('express')
+const cors = require("cors");
+const dbConnect = require('./config/db')
+const TaskRouter = require('./routes/taskRoute')
+const UserRouter = require('./routes/userRoute')
+require('dotenv').config()
+
 
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 8000
 
-app.get("/", async (req, res) => {
+dbConnect()
 
-    let data = await User.find();
-    res.send(data);
+app.use(express.json())
 
+app.use('/tasks', TaskRouter);
+app.use('/users', UserRouter);
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`)
 });
-
-app.post("/", isValid, async (req, res) => {
-    let data = await User.create(req.body);
-    res.send(data);
-});
-
-app.delete("/:id", async (req, res) => {
-    let { id } = req.params;
-    let data = await User.findByIdAndDelete(id);
-    res.send(data ? "User deleted" : "User not found");
-});
-
-app.patch("/:id", async (req, res) => {
-    let { id } = req.params;
-    let data = await User.findByIdAndUpdate(id, req.body, { new: true });
-    res.send(data);
-
-});
-
-
-    app.listen(8090, () => {
-        console.log("Listening on port 8090");
-        dbConnect();
-    });
