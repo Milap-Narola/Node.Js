@@ -1,21 +1,18 @@
+
+
 const express = require('express')
-const cors = require("cors");
 const dbConnect = require('./config/db')
-const TaskRouter = require('./routes/taskRoute')
-const UserRouter = require('./routes/userRoute')
-require('dotenv').config()
-
-
-const app = express();
-const PORT = process.env.PORT || 8000
-
-dbConnect()
+const userRouter = require('./routes/user.route')
+const app = express()
 
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.get("/", (req, res) => {
+    res.send({ msg: "node js error" })
+})
+app.use("/user", userRouter)
 
-app.use('/tasks', TaskRouter);
-app.use('/users', UserRouter);
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
-});
+app.listen(8090, () => {
+    console.log("listening  on port 8090");
+    dbConnect()
+})
